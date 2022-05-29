@@ -36,9 +36,11 @@ namespace DuRound.Manager
         private CinemachineVirtualCamera _cineMachineVirtual;
 
         private CanvasGroup _canvasGroup;
+        private Player test;
 
         private TextMeshProUGUI _currentTurnText;
         private Dialog.DialogSystem dialog;
+        private List<int> isSkipTurn = new List<int>();
 
         private void Awake()
         {
@@ -73,7 +75,13 @@ namespace DuRound.Manager
             {
                 var obj = Instantiate(_player, new Vector2( startPos.transform.position.x,
                     startPos.transform.position.y),Quaternion.identity);
+                obj.name = "player " + player;
                 listOfPlayers.Add(obj);
+                isSkipTurn.Add(player);
+            }
+            for (int turn = 0; turn < isSkipTurn.Count; turn++)
+            {
+                isSkipTurn[turn] = 0;
             }
             _playerScripts = listOfPlayers[0].GetComponent<Player>();
          //   listOfPlayers[0].GetComponent<Player>().StartMove();
@@ -91,7 +99,19 @@ namespace DuRound.Manager
         // Update is called once per frame
         void Update()
         {
-
+        }
+        public void CheckForTheSkipTurn()
+        {
+            if (currentPlayerTurn == 1)
+            {
+                isSkipTurn[0] = 1;
+                isSkipTurn[1] = 0;
+            }
+            else if (currentPlayerTurn == 2)
+            {
+                isSkipTurn[1] = 1;
+                isSkipTurn[0] = 0;
+            }
         }
         public List<GameObject> GetListPlayer() { return listOfPlayers; }
         public bool GetPlayerTurn() { return isPlayerTurn; }
@@ -102,6 +122,7 @@ namespace DuRound.Manager
         {
             if (isPlayerTurn)
             {
+                Debug.Log(listOfPlayers[0].name);
                 _cineMachineVirtual.LookAt = listOfPlayers[0].transform;
                 _cineMachineVirtual.Follow = listOfPlayers[0].transform;
             }
@@ -136,25 +157,29 @@ namespace DuRound.Manager
             {
                 //Debug.Log(currentPlayerTurn);
                 //own player
-                if (currentPlayerTurn == 1)
+                if (currentPlayerTurn == 1 && isSkipTurn[0] == 0)
                 {
                     isPlayerTurn = true;
-                    _currentTurnText.text = playerTurn;
                     ChangeCamera();
+
+                    _currentTurnText.text = playerTurn;
+
                     textTurnAnimator.SetTrigger("isOpen");
                    // OpeningDice();
                 }
                 //not own player
-                else
+                else if(currentPlayerTurn == 2 && isSkipTurn[1] == 0)
                 {
                     isPlayerTurn = false;
+                    ChangeCamera();
+                    Debug.Log("enemy turn@");
                     _currentTurnText.text = enemyTurn;
                     textTurnAnimator.SetTrigger("isOpen");
-                    ChangeCamera();
+
                     StartCoroutine(WaitForSeconds());
 
                     //move player after dicing
-                    //  StartAnimationDicing();
+                      StartAnimationDicing();
                 }
             }
         }
@@ -172,17 +197,16 @@ namespace DuRound.Manager
         }
         private IEnumerator StartDicing()
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(1f);
             isDicing = true;
-            currentPlayerTurn += 1;
+
             while (isDicing)
             {
 
                 var random = Random.Range(1, 7);
                 ChangeSpriteDice(random);
                 yield return isDicing;
-                if (currentPlayerTurn > 2)
-                    currentPlayerTurn = 1;
+
 
                 diceNumber = random;
             }
@@ -193,6 +217,7 @@ namespace DuRound.Manager
             isDicing = false;
             StopCoroutine(StartDicing());
             StartCoroutine(listOfPlayers[currentPlayerTurn - 1].GetComponent<Player>().MovePosition(diceNumber));
+
         }
         private void  ChangeSpriteDice(int number)
         {

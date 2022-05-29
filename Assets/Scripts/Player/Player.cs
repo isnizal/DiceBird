@@ -35,6 +35,7 @@ namespace DuRound.Minion {
             _waterCollider2D = GameObject.Find("Water").GetComponent<Collider2D>();
             _castleCollider2D = GameObject.Find("Castle").GetComponent<Collider2D>();
             incrementPosition = 1;
+            increment = 0;
             listPosition = _pathFinding.GetListPoints();
             _rigidBody2D = GetComponent<Rigidbody2D>();
         }
@@ -49,41 +50,42 @@ namespace DuRound.Minion {
             _rigidBody2D = GetComponent<Rigidbody2D>();
             incrementPosition = 1;
         }
-
-       // private void MovePlayer(int currentPointPosition)
-       // {
-       //     if (incrementPosition < currentPointPosition)
-       //     {
-       //
-       //     }
-       // }
+        private int increment;
         public IEnumerator MovePosition(int currentPosition)
         {
             Debug.Log(currentPosition + "currentPosition");
             lastPosition += currentPosition;
-            while (_rigidBody2D.transform.position != listPosition[lastPosition].transform.position)
+
+            while (_rigidBody2D.transform.position != listPosition[29].transform.position)
             {
-                if (Mathf.Approximately(_rigidBody2D.transform.position.x, listPosition[listPosition.Length-1].transform.position.x)
-                    && Mathf.Approximately(_rigidBody2D.transform.position.y, listPosition[listPosition.Length-1].transform.position.y))
-                {
-                    _gameManager.CheckThePlayerLastPosition();
-                    break;
-                }
+                //if (Mathf.Approximately(_rigidBody2D.transform.position.x, listPosition[listPosition.Length-1].transform.position.x)
+                //    && Mathf.Approximately(_rigidBody2D.transform.position.y, listPosition[listPosition.Length-1].transform.position.y))
+                //{
+                //    _gameManager.CheckThePlayerLastPosition();
+                //    break;
+                //}
                 _rigidBody2D.MovePosition(Vector2.MoveTowards(_rigidBody2D.transform.position,
-                    listPosition[3].transform.position, 2 * Time.deltaTime));
-                if (Mathf.Approximately(_rigidBody2D.transform.position.x , listPosition[3].transform.position.x) 
-                    && Mathf.Approximately(_rigidBody2D.transform.position.y, listPosition[3].transform.position.y))
+                    listPosition[increment].transform.position, 2 * Time.deltaTime));
+                if (Mathf.Approximately(_rigidBody2D.transform.position.x , listPosition[increment].transform.position.x) 
+                    && Mathf.Approximately(_rigidBody2D.transform.position.y, listPosition[increment].transform.position.y))
                 {
+                    increment++;
                     //var minusPos = 0;
                     //Debug.Log("check" + lastPosition);
-                   // minusPos++;
-                 //   if (minusPos > lastPosition)
-                //    {
-                       // Debug.Log(minusPos);
+                    // minusPos++;
+                    //   if (minusPos > lastPosition)
+                    //    {
+                    // Debug.Log(minusPos);
+                    if (increment == 29)
+                    {
                         yield return new WaitForSeconds(1f);
-                        CheckForLayerMask(lastPosition);
-                        //_gameManager.CheckPlayerTurn();
+                        CheckForLayerMask(29);
+                        _gameManager.currentPlayerTurn++;
+                        if (_gameManager.currentPlayerTurn > 2)
+                            _gameManager.currentPlayerTurn = 1;
+                        //
                         break;
+                    }
                   //  }
                     //break;
                 }
@@ -95,23 +97,6 @@ namespace DuRound.Minion {
             _gameManager.CheckPlayerTurn();
         }
 
-        // public void OnTriggerEnter2D(Collider2D collision)
-        // {
-        //     if (collision.name == "Water")
-        //     {
-        //         
-        //         StartCoroutine(WaterMove(position));
-        //         WaterCallBack += WaterMove(0);
-        //     }
-        //     else if (collision.name == "Castle")
-        //     {
-        //
-        //     }
-        //     else if (collision.name == "Mountain")
-        //     {
-        //         StartCoroutine(MountainMove(position));
-        //     }
-        // }
         private void CheckForLayerMask(int position)
         {
             if (_rigidBody2D.IsTouching(_mountainCollider2D))
@@ -129,36 +114,78 @@ namespace DuRound.Minion {
         }
         private IEnumerator WaterMove(int position)
         {
-            Debug.Log(position);
-            var minusOne = 3 - 1;
+            var minusOne = position - 1;
             while (_rigidBody2D.transform.position != listPosition[minusOne].transform.position)
             {
                 _rigidBody2D.MovePosition(Vector2.MoveTowards(_rigidBody2D.transform.position,
                     listPosition[minusOne].transform.position, 2 * Time.deltaTime));
-                yield return null;
+                if (Mathf.Approximately(_rigidBody2D.transform.position.x, listPosition[position].transform.position.x)
+                    && Mathf.Approximately(_rigidBody2D.transform.position.y, listPosition[position].transform.position.y))
+                {
+                    if (position < minusOne)
+                    {
+                        yield return new WaitForSeconds(1f);
+                        _gameManager.CheckPlayerTurn();
+                        increment = position += 1;
+                        break;
+                    }
+
+                }
+
             }
+            _gameManager.CheckPlayerTurn();
         }
 
         private IEnumerator MountainMove(int position)
         {
             //stop move
+            position--;
+          //  Debug.Log("position" + position);
             var minusThree = position - 3;
             while (_rigidBody2D.transform.position != listPosition[minusThree].transform.position)
             {
                 _rigidBody2D.MovePosition(Vector2.MoveTowards(_rigidBody2D.transform.position,
-                    listPosition[minusThree].transform.position, 2 * Time.deltaTime));
+                    listPosition[position].transform.position, 2 * Time.deltaTime));
+                if (Mathf.Approximately(_rigidBody2D.transform.position.x, listPosition[position].transform.position.x)
+                    && Mathf.Approximately(_rigidBody2D.transform.position.y, listPosition[position].transform.position.y))
+                {
+                    position--;
+                    if (position < minusThree)
+                    {
+                        yield return new WaitForSeconds(1f);
+                        Debug.Log("turn on");
+                        _gameManager.CheckPlayerTurn();
+                        increment = position +=1;
+                        break;
+                    }
+
+                }
                 yield return null;
+
             }
+
         }
         private IEnumerator CastleMove(int position)
         {
             var plusTwo = position + 2;
-            while (_rigidBody2D.transform.position != listPosition[plusTwo].transform.position)
+            while (_rigidBody2D.transform.position != listPosition[position].transform.position)
             {
                 _rigidBody2D.MovePosition(Vector2.MoveTowards(_rigidBody2D.transform.position,
                     listPosition[plusTwo].transform.position, 2 * Time.deltaTime));
+                if (Mathf.Approximately(_rigidBody2D.transform.position.x, listPosition[position].transform.position.x)
+                    && Mathf.Approximately(_rigidBody2D.transform.position.y, listPosition[position].transform.position.y))
+                {
+                    position++;
+                    if (position > plusTwo)
+                    {
+                        yield return new WaitForSeconds(1f);
+                        _gameManager.CheckForTheSkipTurn();
+                        break;
+                    }
+                }
                 yield return null;
             }
+            _gameManager.CheckPlayerTurn();
         }
         //private IEnumerator ForestMove(int position)
         //{
