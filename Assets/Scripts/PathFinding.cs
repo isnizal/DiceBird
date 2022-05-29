@@ -28,6 +28,7 @@ namespace DuRound.ThePath
         {
 
         }
+        
         public Transform[] GetListPoints() { return _listOfWayPoints; }
     }
 }

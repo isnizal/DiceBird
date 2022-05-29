@@ -1,17 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class GainTurn : Mechanism
+namespace DuRound.Turn
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-    // Update is called once per frame
-    void Update()
+    public class GainTurn : MonoBehaviour
     {
         
     }

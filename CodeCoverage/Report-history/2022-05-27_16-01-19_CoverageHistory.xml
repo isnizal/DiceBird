@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<coverage version="1.0" date="2022-05-27_16-01-19" tag="">
+  <assembly name="GameManagerAssembly">
+    <class name="BackGroundChangers" coveredlines="0" coverablelines="4" totallines="18" coveredbranches="0" totalbranches="0" />
+    <class name="DuRound.Manager.GameManager" coveredlines="71" coverablelines="76" totallines="139" coveredbranches="0" totalbranches="0" />
+    <class name="DuRound.Minion.Player" coveredlines="25" coverablelines="32" totallines="72" coveredbranches="0" totalbranches="0" />
+    <class name="DuRound.ThePath.PathFinding" coveredlines="14" coverablelines="14" totallines="34" coveredbranches="0" totalbranches="0" />
+    <class name="DuRound.UI.DiceManipulateCanvas" coveredlines="7" coverablelines="10" totallines="32" coveredbranches="0" totalbranches="0" />
+  </assembly>
+  <assembly name="Mechanism">
+    <class name="GainTurn" coveredlines="0" coverablelines="4" totallines="19" coveredbranches="0" totalbranches="0" />
+    <class name="LoseTurn" coveredlines="0" coverablelines="4" totallines="18" coveredbranches="0" totalbranches="0" />
+    <class name="Mechanism" coveredlines="0" coverablelines="4" totallines="18" coveredbranches="0" totalbranches="0" />
+    <class name="StayTurn" coveredlines="0" coverablelines="4" totallines="18" coveredbranches="0" totalbranches="0" />
+  </assembly>
+</coverage>

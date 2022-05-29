@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CoverageReport scope="Summary">
+  <Summary>
+    <Generatedon>27/5/2022 - 4:01:23 PM</Generatedon>
+    <Parser>MultiReportParser (2x OpenCoverParser)</Parser>
+    <Assemblies>2</Assemblies>
+    <Classes>9</Classes>
+    <Files>9</Files>
+    <Coveredlines>117</Coveredlines>
+    <Uncoveredlines>35</Uncoveredlines>
+    <Coverablelines>152</Coverablelines>
+    <Totallines>368</Totallines>
+    <Linecoverage>76.9</Linecoverage>
+    <Coveredbranches>0</Coveredbranches>
+    <Totalbranches>0</Totalbranches>
+    <Coveredmethods>24</Coveredmethods>
+    <Totalmethods>39</Totalmethods>
+    <Methodcoverage>61.5</Methodcoverage>
+  </Summary>
+  <Coverage>
+    <Assembly name="GameManagerAssembly" classes="5" coverage="86" coveredlines="117" coverablelines="136" totallines="295" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="24" totalmethods="31" methodcoverage="77.4">
+      <Class name="BackGroundChangers" coverage="0" coveredlines="0" coverablelines="4" totallines="18" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="0" totalmethods="2" methodcoverage="0" />
+      <Class name="DuRound.Manager.GameManager" coverage="93.4" coveredlines="71" coverablelines="76" totallines="139" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="9" totalmethods="10" methodcoverage="90" />
+      <Class name="DuRound.Minion.Player" coverage="78.1" coveredlines="25" coverablelines="32" totallines="72" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="7" totalmethods="10" methodcoverage="70" />
+      <Class name="DuRound.ThePath.PathFinding" coverage="100" coveredlines="14" coverablelines="14" totallines="34" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="6" totalmethods="6" methodcoverage="100" />
+      <Class name="DuRound.UI.DiceManipulateCanvas" coverage="70" coveredlines="7" coverablelines="10" totallines="32" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="2" totalmethods="3" methodcoverage="66.6" />
+    </Assembly>
+    <Assembly name="Mechanism" classes="4" coverage="0" coveredlines="0" coverablelines="16" totallines="73" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="0" totalmethods="8" methodcoverage="0">
+      <Class name="GainTurn" coverage="0" coveredlines="0" coverablelines="4" totallines="19" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="0" totalmethods="2" methodcoverage="0" />
+      <Class name="LoseTurn" coverage="0" coveredlines="0" coverablelines="4" totallines="18" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="0" totalmethods="2" methodcoverage="0" />
+      <Class name="Mechanism" coverage="0" coveredlines="0" coverablelines="4" totallines="18" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="0" totalmethods="2" methodcoverage="0" />
+      <Class name="StayTurn" coverage="0" coveredlines="0" coverablelines="4" totallines="18" branchcoverage="" coveredbranches="0" totalbranches="0" coveredmethods="0" totalmethods="2" methodcoverage="0" />
+    </Assembly>
+  </Coverage>
+</CoverageReport>

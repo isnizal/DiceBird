@@ -1,3 +1,16 @@
 {
-	"name": "Mechanism"
+    "name": "Mechanism",
+    "rootNamespace": "",
+    "references": [
+        "GUID:73bc20bfd344c1c439868c6c25d18be1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

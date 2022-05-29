@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bac41894ba95df640b42a1533b93fb1f, type: 3}
+  m_Name: DialogSystem
+  m_EditorClassIdentifier: 
+  IntroductionText: You just woke up from your Death to find out the need to go heaven
+    or hell. There is another shadow player to play with you on this game.
+  BeginningText: There is different thing that can slow down your movement progress
+    such as stop at water, castle and mountain.
+  EndingText: You manage to win this game and beat shadow figure. You will live going
+    to the next level.
+  StayTurnText: Opps, you seem cannot move during this turn.
+  GainTurnText: Very nice, you just gain bonus movement during turn
+  LoseTurnText: Opps, you just lost your turn during this round.
