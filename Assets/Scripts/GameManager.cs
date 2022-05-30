@@ -22,7 +22,7 @@ namespace DuRound.Manager
         private Player _playerScripts;
      
         private List<GameObject> listOfPlayers = new List<GameObject>();
-        private Animator diceManipulateAnimator,textTurnAnimator;
+        private Animator diceManipulateAnimator,textTurnAnimator,openingAnimator;
         private Texture2D dice1, dice2, dice3, dice4, dice5, dice6;
         private Sprite dice1Sprite, dice2Sprite, dice3Sprite, dice4Sprite, dice5Sprite, dice6Sprite;
         private UnityEngine.UI.Image diceManipulate;
@@ -36,19 +36,30 @@ namespace DuRound.Manager
         private CinemachineVirtualCamera _cineMachineVirtual;
 
         private CanvasGroup _canvasGroup;
-        private Player test;
+        private CanvasGroup _canvasGroupAnyText;
 
         private TextMeshProUGUI _currentTurnText;
+        private TextMeshProUGUI _anyText;
         private Dialog.DialogSystem dialog;
         private List<int> isSkipTurn = new List<int>();
+        private UnityEngine.UI.Button _closeButton;
+
+        //sounds
+        private Sounds.SoundManager _soundManager;
 
         private void Awake()
         {
+            
             diceManipulate = GameObject.Find("DiceManipulate").GetComponent<UnityEngine.UI.Image>();
             diceManipulateAnimator = GameObject.Find("CanvasOverlay").GetComponent<Animator>();
-            textTurnAnimator = GameObject.Find("CanvasCamera").GetComponent<Animator>();
-            _currentTurnText = GameObject.Find("CanvasCamera").transform.GetChild(0).transform.GetChild(0)
+            var CanvasCamera = GameObject.Find("CanvasCamera");
+            textTurnAnimator = CanvasCamera.GetComponent<Animator>();
+            _currentTurnText = CanvasCamera.transform.GetChild(0).transform.GetChild(0)
                 .GetComponentInChildren<TextMeshProUGUI>();
+            openingAnimator = CanvasCamera.transform.GetChild(3).GetComponent<Animator>();
+            openingAnimator.SetBool("isOpen", true);
+            Time.timeScale = 1;
+
             _player = Resources.Load("Player/PlayerPrefabs") as GameObject;
             //Debug.Log(Resources.Load("WhiteDice/dieWhite1") as Texture2D);
             dice1 = Resources.Load("WhiteDice/dieWhite1") as Texture2D;
@@ -64,8 +75,14 @@ namespace DuRound.Manager
             dice5Sprite = Sprite.Create(dice5, new Rect(0, 0, dice5.width, dice5.height), new Vector2(0.5f, 0.5f));
             dice6Sprite = Sprite.Create(dice6, new Rect(0, 0, dice6.width, dice6.height), new Vector2(0.5f, 0.5f));
             isPlayerTurn = false;
+            _soundManager = GameObject.Find("SoundManager").GetComponent<Sounds.SoundManager>();
             dialog = Resources.Load("Dialog/DialogSystem") as Dialog.DialogSystem;
             _canvasGroup = GameObject.Find("Dialogue").GetComponent<CanvasGroup>();
+            _canvasGroupAnyText = GameObject.Find("OpenText").GetComponent<CanvasGroup>();
+            _anyText = _canvasGroupAnyText.GetComponentInChildren<TextMeshProUGUI>();
+            _closeButton = GameObject.Find("Dialogue").transform.GetChild(0).transform.GetChild(1)
+                .GetComponent<UnityEngine.UI.Button>();
+           // textAnimator = GameObject.Find("OpenText").GetComponent<Animator>();
             currentPlayerTurn = 1;
             _pathFinding = GameObject.Find("PathFinding").GetComponent<PathFinding>();
             _cineMachineVirtual = GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>();
@@ -83,7 +100,7 @@ namespace DuRound.Manager
             {
                 isSkipTurn[turn] = 0;
             }
-            _playerScripts = listOfPlayers[0].GetComponent<Player>();
+            //_playerScripts = listOfPlayers[0].GetComponent<Player>();
          //   listOfPlayers[0].GetComponent<Player>().StartMove();
         }
         // Start is called before the first frame update
@@ -93,25 +110,29 @@ namespace DuRound.Manager
             SetChatPanel(0);
             yield return new WaitForSeconds(0.5f);
             SetChatPanel(1);
-            CheckPlayerTurn();
+            StartCoroutine(CheckPlayerTurn());
         }
 
         // Update is called once per frame
         void Update()
         {
         }
-        public void CheckForTheSkipTurn()
+
+        public Sounds.SoundManager GetSoundManager() { return _soundManager; }
+        public void SetPlayerTurn()
         {
             if (currentPlayerTurn == 1)
             {
                 isSkipTurn[0] = 1;
-                isSkipTurn[1] = 0;
             }
             else if (currentPlayerTurn == 2)
             {
                 isSkipTurn[1] = 1;
-                isSkipTurn[0] = 0;
             }
+           // Debug.Log(currentPlayerTurn + "player turn");
+           // Debug.Log(isSkipTurn[0] + "player 0");
+          //  Debug.Log(isSkipTurn[1] + "player 1");
+            
         }
         public List<GameObject> GetListPlayer() { return listOfPlayers; }
         public bool GetPlayerTurn() { return isPlayerTurn; }
@@ -122,7 +143,6 @@ namespace DuRound.Manager
         {
             if (isPlayerTurn)
             {
-                Debug.Log(listOfPlayers[0].name);
                 _cineMachineVirtual.LookAt = listOfPlayers[0].transform;
                 _cineMachineVirtual.Follow = listOfPlayers[0].transform;
             }
@@ -135,57 +155,119 @@ namespace DuRound.Manager
         //call from animation
         public void OpeningDice()
         {
-
+         //   Debug.LogWarning("set dice to true");
             diceManipulateAnimator.SetBool("isReady", true);
         }
         public void ClosingDice()
         {
-            StopDicing();
+           StartCoroutine( StopDicing());
             diceManipulateAnimator.SetBool("isReady", false);
         }
         public void StartAnimationDicing()
         {
+           // Debug.Log("start dice");
             //diceManipulateAnimator.SetTrigger("isPlay");
             diceManipulateAnimator.SetBool("isReady", true);
             StartCoroutine(StartDicing());
         }
 
         //call from current control player
-        public void CheckPlayerTurn()
+        public IEnumerator CheckPlayerTurn()
         {
+            _soundManager.StopSounds();
             if (numberOfPlayers.Count == 2)
             {
-                //Debug.Log(currentPlayerTurn);
+                //while (currentPlayerTurn != 0)
+                //{
+               // Debug.Log("turn2");
+                //Debug.Log(isSkipTurn[0] + "player 1");
+              //  Debug.Log(isSkipTurn[1] + "player 2");
                 //own player
-                if (currentPlayerTurn == 1 && isSkipTurn[0] == 0)
-                {
-                    isPlayerTurn = true;
-                    ChangeCamera();
+                if (currentPlayerTurn == 1)
+                 {
+                   // Debug.Log("execute");
+                    if (isSkipTurn[0] == 1)
+                    {
+                      //  Debug.LogWarning("player 1 skip turn");
+                        isSkipTurn[0] = 0;
+                        currentPlayerTurn++;
+                        _canvasGroupAnyText.alpha = 1;
+                        _canvasGroupAnyText.interactable = true;
+                        _canvasGroupAnyText.blocksRaycasts = true;
+                        _anyText.text = " Player 1 Skip Turn";
+                        yield return new WaitForSeconds(5f);
+                        _canvasGroupAnyText.alpha = 0;
+                        _canvasGroupAnyText.interactable = false;
+                        _canvasGroupAnyText.blocksRaycasts = false;
+                         StopCoroutine(CheckPlayerTurn());
+                        StartCoroutine(CheckPlayerTurn());
 
-                    _currentTurnText.text = playerTurn;
+                    }
+                    else
+                    {
+                     //   Debug.Log("player turn");
+                        isPlayerTurn = true;
+                        ChangeCamera();
 
-                    textTurnAnimator.SetTrigger("isOpen");
-                   // OpeningDice();
-                }
-                //not own player
-                else if(currentPlayerTurn == 2 && isSkipTurn[1] == 0)
-                {
-                    isPlayerTurn = false;
-                    ChangeCamera();
-                    Debug.Log("enemy turn@");
-                    _currentTurnText.text = enemyTurn;
-                    textTurnAnimator.SetTrigger("isOpen");
+                        _currentTurnText.text = playerTurn;
 
-                    StartCoroutine(WaitForSeconds());
+                        textTurnAnimator.SetTrigger("isOpen");
 
-                    //move player after dicing
-                      StartAnimationDicing();
-                }
+                        yield return new WaitForSeconds(1f);
+                        //yield return null;
+                        //break;
+                        // OpeningDice();
+                      //  Debug.Log("return");
+                        yield return null;
+                    }
+                 }
+                 //not own player
+                 else if (currentPlayerTurn == 2)
+                 {
+                    if (isSkipTurn[1] == 1)
+                    {
+                       // Debug.LogWarning("player 2 skip turn");
+                        isSkipTurn[1] = 0;
+                        currentPlayerTurn = 1;
+                       // Debug.Log("set player turn to 1 " + currentPlayerTurn);
+                        _canvasGroupAnyText.alpha = 1;
+                        _canvasGroupAnyText.interactable = true;
+                        _canvasGroupAnyText.blocksRaycasts = true;
+                        _anyText.text = " Player 2 Skip Turn";
+                        yield return new WaitForSeconds(5f);
+                        _canvasGroupAnyText.alpha = 0;
+                        _canvasGroupAnyText.interactable = false;
+                        _canvasGroupAnyText.blocksRaycasts = false;
+                         StopCoroutine(CheckPlayerTurn());
+                        StartCoroutine(CheckPlayerTurn());
+                        //yield return null;
+                    }
+                    else
+                    {
+                        isPlayerTurn = false;
+                        ChangeCamera();
+                        Debug.Log("enemy turn@");
+                        _currentTurnText.text = enemyTurn;
+
+
+
+                        textTurnAnimator.SetTrigger("isOpen");
+                        yield return new WaitForSeconds(1f);
+
+                        StartCoroutine(WaitForSeconds());
+
+                        //move player after dicing
+                        StartAnimationDicing();
+                        yield return null;
+                    }
+                    // break;
+                 }
+                
             }
         }
         private IEnumerator WaitForSeconds()
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
             Debug.Log("finish waiting");
             textTurnAnimator.SetTrigger("isButtonOff");
             OpeningDice();
@@ -199,23 +281,33 @@ namespace DuRound.Manager
         {
             yield return new WaitForSeconds(1f);
             isDicing = true;
-
+            _soundManager.PlayDiceSound();
             while (isDicing)
             {
 
                 var random = Random.Range(1, 7);
                 ChangeSpriteDice(random);
-                yield return isDicing;
-
+                yield return 0.5f;
 
                 diceNumber = random;
             }
         }
         private int diceNumber;
-        public void StopDicing()
+        public IEnumerator StopDicing()
         {
+            //Debug.Log("stop dicing");
             isDicing = false;
+            yield return new WaitForSeconds(0.5f);
+            _soundManager.StopSounds();
             StopCoroutine(StartDicing());
+            _canvasGroupAnyText.alpha = 1;
+            _canvasGroupAnyText.interactable = true;
+            _canvasGroupAnyText.blocksRaycasts = true;
+            _anyText.text = " Move " + diceNumber + "Position";
+            yield return new WaitForSeconds(3f);
+            _canvasGroupAnyText.alpha = 0;
+            _canvasGroupAnyText.interactable = false;
+            _canvasGroupAnyText.blocksRaycasts = false;
             StartCoroutine(listOfPlayers[currentPlayerTurn - 1].GetComponent<Player>().MovePosition(diceNumber));
 
         }
@@ -247,7 +339,7 @@ namespace DuRound.Manager
         public void CheckThePlayerLastPosition()
         {
             if (Mathf.Approximately(listOfPlayers[0].transform.position.x, _pathFinding.GetListPoints()[_pathFinding.
-                GetListPoints().Length].transform.position.x) && Mathf.Approximately(listOfPlayers[0].transform.position.y,
+                GetListPoints().Length-1].transform.position.x) && Mathf.Approximately(listOfPlayers[0].transform.position.y,
                 _pathFinding.transform.position.y))
             {
                 Debug.LogWarning("You going to heaven");
@@ -278,18 +370,20 @@ namespace DuRound.Manager
                 case 2:
                     _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
                         = dialog.EndingText;
+                    _closeButton.onClick.AddListener(()=>UnityEngine.SceneManagement.SceneManager.LoadScene
+                        ("MainLevel"));
                     break;
                 case 3:
                     _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
-                        = dialog.StayTurnText ;
+                        = dialog.WaterText ;
                     break;
                 case 4:
                     _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
-                        = dialog.GainTurnText;
+                        = dialog.StayText;
                     break;
                 case 5:
                     _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
-                        = dialog.LoseTurnText;
+                        = dialog.MountainText;
                     break;
             }
         }
