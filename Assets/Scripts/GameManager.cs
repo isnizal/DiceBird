@@ -246,7 +246,7 @@ namespace DuRound.Manager
                     {
                         isPlayerTurn = false;
                         ChangeCamera();
-                        Debug.Log("enemy turn@");
+                       // Debug.Log("enemy turn@");
                         _currentTurnText.text = enemyTurn;
 
 
@@ -268,7 +268,7 @@ namespace DuRound.Manager
         private IEnumerator WaitForSeconds()
         {
             yield return new WaitForSeconds(2f);
-            Debug.Log("finish waiting");
+           // Debug.Log("finish waiting");
             textTurnAnimator.SetTrigger("isButtonOff");
             OpeningDice();
         }
@@ -303,7 +303,7 @@ namespace DuRound.Manager
             _canvasGroupAnyText.alpha = 1;
             _canvasGroupAnyText.interactable = true;
             _canvasGroupAnyText.blocksRaycasts = true;
-            _anyText.text = " Move " + diceNumber + "Position";
+            _anyText.text = " Move " + diceNumber + " Position";
             yield return new WaitForSeconds(3f);
             _canvasGroupAnyText.alpha = 0;
             _canvasGroupAnyText.interactable = false;

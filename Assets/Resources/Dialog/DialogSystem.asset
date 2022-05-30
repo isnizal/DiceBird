@@ -18,6 +18,6 @@ MonoBehaviour:
     such as stop at water, castle and mountain.
   EndingText: You manage to win this game and beat shadow figure. You will live going
     to the next level.
-  StayTurnText: Opps, you seem cannot move during this turn.
-  GainTurnText: Very nice, you just gain bonus movement during turn
-  LoseTurnText: Opps, you just lost your turn during this round.
+  WaterText: Opps, You just stop on the water. You move away 1 step
+  StayText: So good to say in the castle. You lose a next turn
+  MountainText: Opps, You just stop at volcano. You move away 3 step

@@ -71,7 +71,7 @@ namespace DuRound.Minion {
                     break;
                 }
                 _rigidBody2D.MovePosition(Vector2.MoveTowards(_rigidBody2D.transform.position,
-                    listPosition[increment].transform.position, 10 * Time.deltaTime));
+                    listPosition[increment].transform.position, 4 * Time.deltaTime));
                 if (Mathf.Approximately(_rigidBody2D.transform.position.x , listPosition[increment].transform.position.x) 
                     && Mathf.Approximately(_rigidBody2D.transform.position.y, listPosition[increment].transform.position.y))
                 {
@@ -85,7 +85,7 @@ namespace DuRound.Minion {
 
                     if (increment == lastPosition)
                     {
-                        _gameManager.currentPlayerTurn++;
+                        //_gameManager.currentPlayerTurn++;
                        // Debug.Log(_gameManager.currentPlayerTurn + "player turn");
                         if (_gameManager.currentPlayerTurn > 2)
                             _gameManager.currentPlayerTurn = 1;
@@ -122,7 +122,9 @@ namespace DuRound.Minion {
             }
             else
             {
+                _gameManager.currentPlayerTurn++;
                 StartCoroutine(_gameManager.CheckPlayerTurn());
+
             }
         }
         private IEnumerator WaterMove(int position)
@@ -140,8 +142,9 @@ namespace DuRound.Minion {
                     {
                         _gameManager.SetChatPanel(3);
                       yield return new WaitForSeconds(1f);
-                      StartCoroutine(_gameManager.CheckPlayerTurn());
-                      increment = +1;
+                       _gameManager.currentPlayerTurn++;
+                       StartCoroutine(_gameManager.CheckPlayerTurn());
+                      increment = minusOne;
                       break;
                     }
 
@@ -169,7 +172,8 @@ namespace DuRound.Minion {
                     {
                         _gameManager.SetChatPanel(5);
                         yield return new WaitForSeconds(1f);
-                       // Debug.Log("turn on");
+                        // Debug.Log("turn on");
+                        _gameManager.currentPlayerTurn++;
                         StartCoroutine(_gameManager.CheckPlayerTurn());
                         increment = position +=1;
                         break;
@@ -202,6 +206,7 @@ namespace DuRound.Minion {
             //Debug.Log("set castle move");
             _gameManager.SetChatPanel(4);
             _gameManager.SetPlayerTurn();
+            _gameManager.currentPlayerTurn++;
             yield return new WaitForSeconds(0.5f);
             StartCoroutine(_gameManager.CheckPlayerTurn());
         }
