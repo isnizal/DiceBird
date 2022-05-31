@@ -12,12 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bac41894ba95df640b42a1533b93fb1f, type: 3}
   m_Name: DialogSystem
   m_EditorClassIdentifier: 
-  IntroductionText: You just woke up from your Death to find out the need to go heaven
-    or hell. There is another shadow player to play with you on this game.
-  BeginningText: There is different thing that can slow down your movement progress
+  IntroductionText: You just woke up from dead wondering  spirit in race board game.
+    The final path will be hell or heaven. Your shadow will be your enemy on this
+    game.
+  BeginningText: Tip, there is different thing that can slow down your movement progress
     such as stop at water, castle and mountain.
-  EndingText: You manage to win this game and beat shadow figure. You will live going
-    to the next level.
-  WaterText: Opps, You just stop on the water. You move away 1 step
-  StayText: So good to say in the castle. You lose a next turn
-  MountainText: Opps, You just stop at volcano. You move away 3 step
+  EndingText: You just defeat your shadow figure and manage to go to the next life
+    of level.
+  WaterText: The water has spoil you. Now you lose current position!
+  StayText: Taking a break at the castle so relaxing. Lose 1 turn on next dice.
+  MountainText: The volcano has explode nearby you and you run away from those. Lose
+    3 position on board.
+  moveNumberText: Choose number to make other move

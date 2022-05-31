@@ -3,7 +3,7 @@ namespace DuRound.Minion {
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
-    using UnityEngine.Events;
+    using UnityEngine.UI;
     using DuRound.ThePath;
     using DuRound.Manager;
     public class Player : MonoBehaviour
@@ -15,6 +15,8 @@ namespace DuRound.Minion {
         private Transform[] listPosition;
         private Rigidbody2D _rigidBody2D;
         private GameManager _gameManager;
+        private Button _1Btn, _2Btn, _3Btn, _4Btn, _5Btn, _6Btn;
+        private CanvasGroup _turnCountCanvas;
         private int lastPosition { get; set; }
       //  private bool firstTurn = false;
      //   private int amountOfTurn { get; set; }
@@ -22,7 +24,13 @@ namespace DuRound.Minion {
 
         private void Awake()
         {
-
+            _1Btn = transform.GetChild(0).transform.GetChild(0).GetComponent<Button>();
+            _2Btn = transform.GetChild(0).transform.GetChild(1).GetComponent<Button>();
+            _3Btn = transform.GetChild(0).transform.GetChild(2).GetComponent<Button>();
+            _4Btn = transform.GetChild(0).transform.GetChild(3).GetComponent<Button>();
+            _5Btn = transform.GetChild(0).transform.GetChild(4).GetComponent<Button>();
+            _6Btn = transform.GetChild(0).transform.GetChild(5).GetComponent<Button>();
+            _turnCountCanvas = GetComponentInChildren<CanvasGroup>();
 
         }
         // Start is called before the first frame update
@@ -34,7 +42,27 @@ namespace DuRound.Minion {
             _mountainCollider2D = GameObject.Find("Mountain").GetComponent<Collider2D>();
             _waterCollider2D = GameObject.Find("Water").GetComponent<Collider2D>();
             _castleCollider2D = GameObject.Find("Castle").GetComponent<Collider2D>();
-           // incrementPosition = 1;
+
+            _1Btn.onClick.AddListener(() => { StartCoroutine(MovePosition(1));
+                SetTurnCountOff();
+            });
+            _2Btn.onClick.AddListener(() => { StartCoroutine(MovePosition(2));
+                SetTurnCountOff();
+            });
+            _3Btn.onClick.AddListener(() => { StartCoroutine(MovePosition(3));
+                SetTurnCountOff();
+            });
+            _4Btn.onClick.AddListener(() => { StartCoroutine(MovePosition(4));
+                SetTurnCountOff();
+            });
+            _5Btn.onClick.AddListener(() => { StartCoroutine(MovePosition(5));
+                SetTurnCountOff();
+            });
+            _6Btn.onClick.AddListener(() => { StartCoroutine(MovePosition(6));
+                SetTurnCountOff();
+            });
+
+            // incrementPosition = 1;
             increment = 0;
             lastPosition = 0;
             listPosition = _pathFinding.GetListPoints();
@@ -49,7 +77,7 @@ namespace DuRound.Minion {
         }
         private void Reset()
         {
-            _animator = GetComponent<Animator>();
+           // _animator = GetComponent<Animator>();
             _rigidBody2D = GetComponent<Rigidbody2D>();
            // incrementPosition = 1;
         }
@@ -185,6 +213,18 @@ namespace DuRound.Minion {
             if (_gameManager.currentPlayerTurn > 2)
                 _gameManager.currentPlayerTurn = 1;
             StartCoroutine(_gameManager.CheckPlayerTurn());
+        }
+        public void SetTurnCountOn()
+        {
+            _turnCountCanvas.alpha = 1;
+            _turnCountCanvas.interactable = true;
+            _turnCountCanvas.blocksRaycasts = true;
+        }
+        public void SetTurnCountOff()
+        {
+            _turnCountCanvas.alpha = 0;
+            _turnCountCanvas.interactable = false;
+            _turnCountCanvas.blocksRaycasts = false;
         }
 
     }

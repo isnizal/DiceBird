@@ -22,8 +22,8 @@ namespace DuRound.Manager
         private Player _playerScripts;
      
         private List<GameObject> listOfPlayers = new List<GameObject>();
-        private Animator diceManipulateAnimator,textTurnAnimator,openingAnimator;
-        private Texture2D dice1, dice2, dice3, dice4, dice5, dice6,playerSprite1,playerSprite2;
+        private Animator textTurnAnimator,openingAnimator;
+        private Texture2D playerSprite1,playerSprite2;
         private Sprite dice1Sprite, dice2Sprite, dice3Sprite, dice4Sprite, dice5Sprite, dice6Sprite;
         private Sprite _playerSprite1, _playerSprite2;
         private UnityEngine.UI.Image diceManipulate;
@@ -51,8 +51,6 @@ namespace DuRound.Manager
         private void Awake()
         {
             
-            diceManipulate = GameObject.Find("DiceManipulate").GetComponent<UnityEngine.UI.Image>();
-            diceManipulateAnimator = GameObject.Find("CanvasOverlay").GetComponent<Animator>();
             var CanvasCamera = GameObject.Find("CanvasCamera");
             textTurnAnimator = CanvasCamera.GetComponent<Animator>();
             _currentTurnText = CanvasCamera.transform.GetChild(0).transform.GetChild(0)
@@ -60,23 +58,9 @@ namespace DuRound.Manager
             openingAnimator = CanvasCamera.transform.GetChild(3).GetComponent<Animator>();
             openingAnimator.SetBool("isOpen", true);
             Time.timeScale = 1;
-
-            _player = Resources.Load("Player/PlayerPrefabs") as GameObject;
-            //Debug.Log(Resources.Load("WhiteDice/dieWhite1") as Texture2D);
-            dice1 = Resources.Load("WhiteDice/dieWhite1") as Texture2D;
-            dice2 = Resources.Load("WhiteDice/dieWhite2") as Texture2D;
-            dice3 = Resources.Load("WhiteDice/dieWhite3") as Texture2D;
-            dice4 = Resources.Load("WhiteDice/dieWhite4") as Texture2D;
-            dice5 = Resources.Load("WhiteDice/dieWhite5") as Texture2D;
-            dice6 = Resources.Load("WhiteDice/dieWhite6") as Texture2D;
             playerSprite1 = Resources.Load("Player/Sprites/pieceBlack_border00") as Texture2D;
             playerSprite2 = Resources.Load("Player/Sprites/pieceBlue_border01") as Texture2D;
-            dice1Sprite = Sprite.Create(dice1,new Rect(0,0,dice1.width,dice1.height),new Vector2(0.5f,0.5f));
-            dice2Sprite = Sprite.Create(dice2, new Rect(0, 0, dice2.width, dice2.height), new Vector2(0.5f, 0.5f));
-            dice3Sprite = Sprite.Create(dice3, new Rect(0, 0, dice3.width, dice3.height), new Vector2(0.5f, 0.5f));
-            dice4Sprite = Sprite.Create(dice4, new Rect(0, 0, dice4.width, dice4.height), new Vector2(0.5f, 0.5f));
-            dice5Sprite = Sprite.Create(dice5, new Rect(0, 0, dice5.width, dice5.height), new Vector2(0.5f, 0.5f));
-            dice6Sprite = Sprite.Create(dice6, new Rect(0, 0, dice6.width, dice6.height), new Vector2(0.5f, 0.5f));
+            _player = Resources.Load("Player/PlayerPrefabs") as GameObject;
             _playerSprite1 = Sprite.Create(playerSprite1, new Rect(0, 0, playerSprite1.width, playerSprite1.height),
                 new Vector2(0.5f, 0.5f));
             _playerSprite2 = Sprite.Create(playerSprite2, new Rect(0, 0, playerSprite2.width, playerSprite2.height),
@@ -163,24 +147,25 @@ namespace DuRound.Manager
                 _cineMachineVirtual.Follow = listOfPlayers[1].transform;
             }
         }
+        /*
         //call from animation
         public void OpeningDice()
         {
          //   Debug.LogWarning("set dice to true");
-            diceManipulateAnimator.SetBool("isReady", true);
+          //  diceManipulateAnimator.SetBool("isReady", true);
         }
         public void ClosingDice()
         {
-           StartCoroutine( StopDicing());
-            diceManipulateAnimator.SetBool("isReady", false);
+          // StartCoroutine( StopDicing());
+          //  diceManipulateAnimator.SetBool("isReady", false);
         }
         public void StartAnimationDicing()
         {
            // Debug.Log("start dice");
             //diceManipulateAnimator.SetTrigger("isPlay");
-            diceManipulateAnimator.SetBool("isReady", true);
+            //diceManipulateAnimator.SetBool("isReady", true);
             StartCoroutine(StartDicing());
-        }
+        }*/
 
         //call from current control player
         public IEnumerator CheckPlayerTurn()
@@ -223,7 +208,10 @@ namespace DuRound.Manager
                         _currentTurnText.text = playerTurn;
 
                         textTurnAnimator.SetTrigger("isOpen");
-
+                        yield return new WaitForSeconds(1f);
+                        SetChatPanel(6);
+                        yield return new WaitForSeconds(1f);
+                        listOfPlayers[1].GetComponent<Player>().SetTurnCountOn();
                         yield return null;
                     }
                  }
@@ -258,12 +246,23 @@ namespace DuRound.Manager
 
 
                         textTurnAnimator.SetTrigger("isOpen");
-                        yield return new WaitForSeconds(2f);
-
-                        StartCoroutine(WaitForSeconds());
+                        yield return new WaitForSeconds(1f);
+                        SetChatPanel(6);
+                        yield return new WaitForSeconds(1f);
+                        // StartCoroutine(WaitForSeconds());
 
                         //move player after dicing
-                        StartAnimationDicing();
+                        // StartAnimationDicing();
+                        var noChance = Random.Range(1, 6);
+                        _canvasGroupAnyText.alpha = 1;
+                        _canvasGroupAnyText.interactable = true;
+                        _canvasGroupAnyText.blocksRaycasts = true;
+                        _anyText.text = " You got " + noChance + "Position to move";
+                        yield return new WaitForSeconds(5f);
+                        _canvasGroupAnyText.alpha = 0;
+                        _canvasGroupAnyText.interactable = false;
+                        _canvasGroupAnyText.blocksRaycasts = false;
+                        StartCoroutine(listOfPlayers[0].GetComponent<Player>().MovePosition(noChance));
                         yield return null;
                     }
                     // break;
@@ -276,7 +275,7 @@ namespace DuRound.Manager
             yield return new WaitForSeconds(2f);
            // Debug.Log("finish waiting");
             textTurnAnimator.SetTrigger("isButtonOff");
-            OpeningDice();
+           //. OpeningDice();
         }
         public void CoroutineDicing()
         {
@@ -299,24 +298,24 @@ namespace DuRound.Manager
             }
         }
         private int diceNumber;
-        public IEnumerator StopDicing()
-        {
-            //Debug.Log("stop dicing");
-            isDicing = false;
-            yield return new WaitForSeconds(0.5f);
-            _soundManager.StopSounds();
-            StopCoroutine(StartDicing());
-            _canvasGroupAnyText.alpha = 1;
-            _canvasGroupAnyText.interactable = true;
-            _canvasGroupAnyText.blocksRaycasts = true;
-            _anyText.text = " Move " + diceNumber + " Position";
-            yield return new WaitForSeconds(3f);
-            _canvasGroupAnyText.alpha = 0;
-            _canvasGroupAnyText.interactable = false;
-            _canvasGroupAnyText.blocksRaycasts = false;
-            StartCoroutine(listOfPlayers[currentPlayerTurn - 1].GetComponent<Player>().MovePosition(diceNumber));
-
-        }
+        //public IEnumerator StopDicing()
+        //{
+        //    //Debug.Log("stop dicing");
+        //    isDicing = false;
+        //    yield return new WaitForSeconds(0.5f);
+        //    _soundManager.StopSounds();
+        //    StopCoroutine(StartDicing());
+        //    _canvasGroupAnyText.alpha = 1;
+        //    _canvasGroupAnyText.interactable = true;
+        //    _canvasGroupAnyText.blocksRaycasts = true;
+        //    _anyText.text = " Move " + diceNumber + " Position";
+        //    yield return new WaitForSeconds(3f);
+        //    _canvasGroupAnyText.alpha = 0;
+        //    _canvasGroupAnyText.interactable = false;
+        //    _canvasGroupAnyText.blocksRaycasts = false;
+        //    StartCoroutine(listOfPlayers[currentPlayerTurn - 1].GetComponent<Player>().MovePosition(diceNumber));
+        //
+        //}
         private void  ChangeSpriteDice(int number)
         {
             switch (number)
@@ -357,6 +356,7 @@ namespace DuRound.Manager
                 Debug.LogWarning("You going to hell");
             }
         }
+        
         public void SetChatPanel(int textNumber)
         {
             _canvasGroup.alpha = 1;
@@ -390,6 +390,10 @@ namespace DuRound.Manager
                 case 5:
                     _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
                         = dialog.MountainText;
+                    break;
+                case 6:
+                    _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
+                    = dialog.moveNumberText;
                     break;
             }
         }
