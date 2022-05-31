@@ -23,8 +23,9 @@ namespace DuRound.Manager
      
         private List<GameObject> listOfPlayers = new List<GameObject>();
         private Animator diceManipulateAnimator,textTurnAnimator,openingAnimator;
-        private Texture2D dice1, dice2, dice3, dice4, dice5, dice6;
+        private Texture2D dice1, dice2, dice3, dice4, dice5, dice6,playerSprite1,playerSprite2;
         private Sprite dice1Sprite, dice2Sprite, dice3Sprite, dice4Sprite, dice5Sprite, dice6Sprite;
+        private Sprite _playerSprite1, _playerSprite2;
         private UnityEngine.UI.Image diceManipulate;
 
         private bool isDicing;
@@ -68,12 +69,18 @@ namespace DuRound.Manager
             dice4 = Resources.Load("WhiteDice/dieWhite4") as Texture2D;
             dice5 = Resources.Load("WhiteDice/dieWhite5") as Texture2D;
             dice6 = Resources.Load("WhiteDice/dieWhite6") as Texture2D;
+            playerSprite1 = Resources.Load("Player/Sprites/pieceBlack_border00") as Texture2D;
+            playerSprite2 = Resources.Load("Player/Sprites/pieceBlue_border01") as Texture2D;
             dice1Sprite = Sprite.Create(dice1,new Rect(0,0,dice1.width,dice1.height),new Vector2(0.5f,0.5f));
             dice2Sprite = Sprite.Create(dice2, new Rect(0, 0, dice2.width, dice2.height), new Vector2(0.5f, 0.5f));
             dice3Sprite = Sprite.Create(dice3, new Rect(0, 0, dice3.width, dice3.height), new Vector2(0.5f, 0.5f));
             dice4Sprite = Sprite.Create(dice4, new Rect(0, 0, dice4.width, dice4.height), new Vector2(0.5f, 0.5f));
             dice5Sprite = Sprite.Create(dice5, new Rect(0, 0, dice5.width, dice5.height), new Vector2(0.5f, 0.5f));
             dice6Sprite = Sprite.Create(dice6, new Rect(0, 0, dice6.width, dice6.height), new Vector2(0.5f, 0.5f));
+            _playerSprite1 = Sprite.Create(playerSprite1, new Rect(0, 0, playerSprite1.width, playerSprite1.height),
+                new Vector2(0.5f, 0.5f));
+            _playerSprite2 = Sprite.Create(playerSprite2, new Rect(0, 0, playerSprite2.width, playerSprite2.height),
+                new Vector2(0.5f, 0.5f));
             isPlayerTurn = false;
             _soundManager = GameObject.Find("SoundManager").GetComponent<Sounds.SoundManager>();
             dialog = Resources.Load("Dialog/DialogSystem") as Dialog.DialogSystem;
@@ -86,12 +93,13 @@ namespace DuRound.Manager
             currentPlayerTurn = 1;
             _pathFinding = GameObject.Find("PathFinding").GetComponent<PathFinding>();
             _cineMachineVirtual = GameObject.Find("CM vcam1").GetComponent<CinemachineVirtualCamera>();
-            startPos = _pathFinding.GetListPoints()[0].transform;
+            startPos = GameObject.Find("SpawnPosition").transform;
             //spawn player
             for (int player = 0; player < numberOfPlayers.Count; player++)
             {
-                var obj = Instantiate(_player, new Vector2( startPos.transform.position.x,
-                    startPos.transform.position.y),Quaternion.identity);
+                var obj = Instantiate(_player, new Vector2( startPos.position.x,
+                    startPos.position.y),Quaternion.identity);
+                
                 obj.name = "player " + player;
                 listOfPlayers.Add(obj);
                 isSkipTurn.Add(player);
@@ -100,8 +108,10 @@ namespace DuRound.Manager
             {
                 isSkipTurn[turn] = 0;
             }
+            listOfPlayers[0].GetComponent<SpriteRenderer>().sprite = _playerSprite1;
+            listOfPlayers[1].GetComponent<SpriteRenderer>().sprite = _playerSprite2;
             //_playerScripts = listOfPlayers[0].GetComponent<Player>();
-         //   listOfPlayers[0].GetComponent<Player>().StartMove();
+            //   listOfPlayers[0].GetComponent<Player>().StartMove();
         }
         // Start is called before the first frame update
         IEnumerator  Start()
@@ -121,6 +131,7 @@ namespace DuRound.Manager
         public Sounds.SoundManager GetSoundManager() { return _soundManager; }
         public void SetPlayerTurn()
         {
+             Debug.Log(currentPlayerTurn + "player turn");
             if (currentPlayerTurn == 1)
             {
                 isSkipTurn[0] = 1;
@@ -129,7 +140,7 @@ namespace DuRound.Manager
             {
                 isSkipTurn[1] = 1;
             }
-           // Debug.Log(currentPlayerTurn + "player turn");
+
            // Debug.Log(isSkipTurn[0] + "player 0");
           //  Debug.Log(isSkipTurn[1] + "player 1");
             
@@ -179,9 +190,9 @@ namespace DuRound.Manager
             {
                 //while (currentPlayerTurn != 0)
                 //{
-               // Debug.Log("turn2");
+                //Debug.Log("turn2");
                 //Debug.Log(isSkipTurn[0] + "player 1");
-              //  Debug.Log(isSkipTurn[1] + "player 2");
+                //Debug.Log(isSkipTurn[1] + "player 2");
                 //own player
                 if (currentPlayerTurn == 1)
                  {
@@ -205,7 +216,7 @@ namespace DuRound.Manager
                     }
                     else
                     {
-                     //   Debug.Log("player turn");
+                        //Debug.Log("player turn");
                         isPlayerTurn = true;
                         ChangeCamera();
 
@@ -213,11 +224,6 @@ namespace DuRound.Manager
 
                         textTurnAnimator.SetTrigger("isOpen");
 
-                        yield return new WaitForSeconds(1f);
-                        //yield return null;
-                        //break;
-                        // OpeningDice();
-                      //  Debug.Log("return");
                         yield return null;
                     }
                  }
@@ -246,13 +252,13 @@ namespace DuRound.Manager
                     {
                         isPlayerTurn = false;
                         ChangeCamera();
-                       // Debug.Log("enemy turn@");
+                        Debug.Log("enemy turn@");
                         _currentTurnText.text = enemyTurn;
 
 
 
                         textTurnAnimator.SetTrigger("isOpen");
-                        yield return new WaitForSeconds(1f);
+                        yield return new WaitForSeconds(2f);
 
                         StartCoroutine(WaitForSeconds());
 

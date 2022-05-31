@@ -35,7 +35,7 @@ namespace DuRound.UI
         }
         public void ClosingDice()
         {
-            Debug.Log("closing dice");
+           // Debug.Log("closing dice");
             _gameManager.ClosingDice();
         }
     }
