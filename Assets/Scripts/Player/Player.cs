@@ -84,6 +84,20 @@ namespace DuRound.Minion {
         private int increment;
         public IEnumerator MovePosition(int currentPosition)
         {
+            if (_gameManager.IsPlayerTurn())
+            {
+                _gameManager.GetCineMachineVirtual().LookAt = _gameManager.GetListPlayer()
+                    [1].transform;
+                _gameManager.GetCineMachineVirtual().Follow = _gameManager.GetListPlayer()
+                    [1].transform;
+            }
+            else
+            {
+                _gameManager.GetCineMachineVirtual().LookAt = _gameManager.GetListPlayer()
+                    [0].transform;
+                _gameManager.GetCineMachineVirtual().Follow = _gameManager.GetListPlayer()
+                    [0].transform;
+            }
             _gameManager.GetSoundManager().PlayPawnSound();
            //Debug.Log(currentPosition + "currentPosition");
             lastPosition += currentPosition;

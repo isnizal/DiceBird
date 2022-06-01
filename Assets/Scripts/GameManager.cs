@@ -113,6 +113,7 @@ namespace DuRound.Manager
         }
 
         public Sounds.SoundManager GetSoundManager() { return _soundManager; }
+        public bool IsPlayerTurn() { return isPlayerTurn; }
         public void SetPlayerTurn()
         {
              Debug.Log(currentPlayerTurn + "player turn");
@@ -147,37 +148,12 @@ namespace DuRound.Manager
                 _cineMachineVirtual.Follow = listOfPlayers[1].transform;
             }
         }
-        /*
-        //call from animation
-        public void OpeningDice()
-        {
-         //   Debug.LogWarning("set dice to true");
-          //  diceManipulateAnimator.SetBool("isReady", true);
-        }
-        public void ClosingDice()
-        {
-          // StartCoroutine( StopDicing());
-          //  diceManipulateAnimator.SetBool("isReady", false);
-        }
-        public void StartAnimationDicing()
-        {
-           // Debug.Log("start dice");
-            //diceManipulateAnimator.SetTrigger("isPlay");
-            //diceManipulateAnimator.SetBool("isReady", true);
-            StartCoroutine(StartDicing());
-        }*/
-
         //call from current control player
         public IEnumerator CheckPlayerTurn()
         {
             _soundManager.StopSounds();
             if (numberOfPlayers.Count == 2)
             {
-                //while (currentPlayerTurn != 0)
-                //{
-                //Debug.Log("turn2");
-                //Debug.Log(isSkipTurn[0] + "player 1");
-                //Debug.Log(isSkipTurn[1] + "player 2");
                 //own player
                 if (currentPlayerTurn == 1)
                  {
@@ -257,7 +233,7 @@ namespace DuRound.Manager
                         _canvasGroupAnyText.alpha = 1;
                         _canvasGroupAnyText.interactable = true;
                         _canvasGroupAnyText.blocksRaycasts = true;
-                        _anyText.text = " You got " + noChance + "Position to move";
+                        _anyText.text = " You got " + noChance + " Position to move";
                         yield return new WaitForSeconds(5f);
                         _canvasGroupAnyText.alpha = 0;
                         _canvasGroupAnyText.interactable = false;
@@ -277,45 +253,6 @@ namespace DuRound.Manager
             textTurnAnimator.SetTrigger("isButtonOff");
            //. OpeningDice();
         }
-        public void CoroutineDicing()
-        {
-            StopCoroutine(StartDicing());
-            StartCoroutine(StartDicing());
-        }
-        private IEnumerator StartDicing()
-        {
-            yield return new WaitForSeconds(1f);
-            isDicing = true;
-            _soundManager.PlayDiceSound();
-            while (isDicing)
-            {
-
-                var random = Random.Range(1, 7);
-                ChangeSpriteDice(random);
-                yield return 0.5f;
-
-                diceNumber = random;
-            }
-        }
-        private int diceNumber;
-        //public IEnumerator StopDicing()
-        //{
-        //    //Debug.Log("stop dicing");
-        //    isDicing = false;
-        //    yield return new WaitForSeconds(0.5f);
-        //    _soundManager.StopSounds();
-        //    StopCoroutine(StartDicing());
-        //    _canvasGroupAnyText.alpha = 1;
-        //    _canvasGroupAnyText.interactable = true;
-        //    _canvasGroupAnyText.blocksRaycasts = true;
-        //    _anyText.text = " Move " + diceNumber + " Position";
-        //    yield return new WaitForSeconds(3f);
-        //    _canvasGroupAnyText.alpha = 0;
-        //    _canvasGroupAnyText.interactable = false;
-        //    _canvasGroupAnyText.blocksRaycasts = false;
-        //    StartCoroutine(listOfPlayers[currentPlayerTurn - 1].GetComponent<Player>().MovePosition(diceNumber));
-        //
-        //}
         private void  ChangeSpriteDice(int number)
         {
             switch (number)
