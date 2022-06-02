@@ -23,4 +23,5 @@ MonoBehaviour:
   StayText: Taking a break at the castle so relaxing. Lose 1 turn on next dice.
   MountainText: The volcano has explode nearby you and you run away from those. Lose
     3 position on board.
-  moveNumberText: Choose number to make other move
+  moveNumberText: Choose  a number
+  playerNumberText: Enemy thinking...

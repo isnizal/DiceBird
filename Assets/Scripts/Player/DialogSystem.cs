@@ -7,7 +7,7 @@ namespace DuRound.Dialog
     public class DialogSystem : ScriptableObject
     {
         public string IntroductionText, BeginningText, EndingText, WaterText,
-        StayText, MountainText, moveNumberText;
+        StayText, MountainText, moveNumberText, playerNumberText;
 
     }
 }

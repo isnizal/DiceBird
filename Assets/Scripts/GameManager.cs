@@ -36,7 +36,7 @@ namespace DuRound.Manager
 
         private CinemachineVirtualCamera _cineMachineVirtual;
 
-        private CanvasGroup _canvasGroup;
+        private CanvasGroup _canvasGroupDialog;
         private CanvasGroup _canvasGroupAnyText;
 
         private TextMeshProUGUI _currentTurnText;
@@ -68,7 +68,7 @@ namespace DuRound.Manager
             isPlayerTurn = false;
             _soundManager = GameObject.Find("SoundManager").GetComponent<Sounds.SoundManager>();
             dialog = Resources.Load("Dialog/DialogSystem") as Dialog.DialogSystem;
-            _canvasGroup = GameObject.Find("Dialogue").GetComponent<CanvasGroup>();
+            _canvasGroupDialog = GameObject.Find("Dialogue").GetComponent<CanvasGroup>();
             _canvasGroupAnyText = GameObject.Find("OpenText").GetComponent<CanvasGroup>();
             _anyText = _canvasGroupAnyText.GetComponentInChildren<TextMeshProUGUI>();
             _closeButton = GameObject.Find("Dialogue").transform.GetChild(0).transform.GetChild(1)
@@ -83,7 +83,14 @@ namespace DuRound.Manager
             {
                 var obj = Instantiate(_player, new Vector2( startPos.position.x,
                     startPos.position.y),Quaternion.identity);
-                
+                if (player == 0)
+                {
+                    obj.GetComponent<Player>().SetPlayer(true);
+                }
+                else
+                {
+                    obj.GetComponent<Player>().SetPlayer(false);
+                }
                 obj.name = "player " + player;
                 listOfPlayers.Add(obj);
                 isSkipTurn.Add(player);
@@ -94,16 +101,15 @@ namespace DuRound.Manager
             }
             listOfPlayers[0].GetComponent<SpriteRenderer>().sprite = _playerSprite1;
             listOfPlayers[1].GetComponent<SpriteRenderer>().sprite = _playerSprite2;
-            //_playerScripts = listOfPlayers[0].GetComponent<Player>();
-            //   listOfPlayers[0].GetComponent<Player>().StartMove();
         }
         // Start is called before the first frame update
         IEnumerator  Start()
         {
 
             SetChatPanel(0);
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1f);
             SetChatPanel(1);
+            yield return new WaitForSeconds(1f);
             StartCoroutine(CheckPlayerTurn());
         }
 
@@ -154,15 +160,16 @@ namespace DuRound.Manager
             _soundManager.StopSounds();
             if (numberOfPlayers.Count == 2)
             {
+               // Debug.Log(currentPlayerTurn + "player turn");
                 //own player
                 if (currentPlayerTurn == 1)
                  {
-                   // Debug.Log("execute");
+
                     if (isSkipTurn[0] == 1)
                     {
                       //  Debug.LogWarning("player 1 skip turn");
                         isSkipTurn[0] = 0;
-                        currentPlayerTurn++;
+                        //currentPlayerTurn++;
                         _canvasGroupAnyText.alpha = 1;
                         _canvasGroupAnyText.interactable = true;
                         _canvasGroupAnyText.blocksRaycasts = true;
@@ -184,6 +191,7 @@ namespace DuRound.Manager
                         _currentTurnText.text = playerTurn;
 
                         textTurnAnimator.SetTrigger("isOpen");
+                        _soundManager.PlayTurnSounds();
                         yield return new WaitForSeconds(1f);
                         SetChatPanel(6);
                         yield return new WaitForSeconds(1f);
@@ -216,14 +224,15 @@ namespace DuRound.Manager
                     {
                         isPlayerTurn = false;
                         ChangeCamera();
-                        Debug.Log("enemy turn@");
+                        //Debug.Log("enemy turn@");
                         _currentTurnText.text = enemyTurn;
 
 
 
                         textTurnAnimator.SetTrigger("isOpen");
-                        yield return new WaitForSeconds(1f);
-                        SetChatPanel(6);
+                        _soundManager.PlayTurnSounds();
+                        yield return new WaitForSeconds(5f);
+                        SetChatPanel(7);
                         yield return new WaitForSeconds(1f);
                         // StartCoroutine(WaitForSeconds());
 
@@ -296,49 +305,53 @@ namespace DuRound.Manager
         
         public void SetChatPanel(int textNumber)
         {
-            _canvasGroup.alpha = 1;
-            _canvasGroup.interactable = true;
-            _canvasGroup.blocksRaycasts = true;
+            _canvasGroupDialog.alpha = 1;
+            _canvasGroupDialog.interactable = true;
+            _canvasGroupDialog.blocksRaycasts = true;
             Time.timeScale = 0;
             switch (textNumber)
             {
                 case 0:
-                    _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
+                    _canvasGroupDialog.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
                         = dialog.IntroductionText;
                     break;
                 case 1:
-                    _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
+                    _canvasGroupDialog.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
                         = dialog.BeginningText;
                     break;
                 case 2:
-                    _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
+                    _canvasGroupDialog.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
                         = dialog.EndingText;
                     _closeButton.onClick.AddListener(()=>UnityEngine.SceneManagement.SceneManager.LoadScene
                         ("MainLevel"));
                     break;
                 case 3:
-                    _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
+                    _canvasGroupDialog.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
                         = dialog.WaterText ;
                     break;
                 case 4:
-                    _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
+                    _canvasGroupDialog.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
                         = dialog.StayText;
                     break;
                 case 5:
-                    _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
+                    _canvasGroupDialog.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
                         = dialog.MountainText;
                     break;
                 case 6:
-                    _canvasGroup.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
+                    _canvasGroupDialog.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
                     = dialog.moveNumberText;
+                    break;
+                case 7:
+                    _canvasGroupDialog.gameObject.GetComponentInChildren<TextMeshProUGUI>().text
+                    = dialog.playerNumberText;
                     break;
             }
         }
         public void CloseChatPanel()
         {
-            _canvasGroup.alpha = 0;
-            _canvasGroup.interactable = false;
-            _canvasGroup.blocksRaycasts = false;
+            _canvasGroupDialog.alpha = 0;
+            _canvasGroupDialog.interactable = false;
+            _canvasGroupDialog.blocksRaycasts = false;
             Time.timeScale = 1;
         }
     }

@@ -7,7 +7,7 @@ namespace DuRound.Sounds
     public class SoundManager : MonoBehaviour
     {
         private AudioSource _audioSource;
-        private AudioClip _diceClip, _pawnMovement;
+        private AudioClip _diceClip, _pawnMovement,_turnSounds;
         private void Awake()
         {
             _audioSource = GetComponent<AudioSource>();
@@ -17,6 +17,7 @@ namespace DuRound.Sounds
         {
             _diceClip = Resources.Load("Sounds/dieShuffle1") as AudioClip;
             _pawnMovement = Resources.Load("Sounds/pawnMove") as AudioClip;
+            _turnSounds = Resources.Load("Sounds/playerTurn") as AudioClip;
         }
 
         // Update is called once per frame
@@ -43,7 +44,10 @@ namespace DuRound.Sounds
         {
             _audioSource.PlayOneShot(_pawnMovement);
         }
-
+        public void PlayTurnSounds()
+        {
+            _audioSource.PlayOneShot(_turnSounds);
+        }
         public void StopSounds()
         {
             _audioSource.Stop();
